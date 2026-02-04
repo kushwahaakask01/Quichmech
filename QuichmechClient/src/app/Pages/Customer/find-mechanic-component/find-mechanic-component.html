@@ -1,0 +1,172 @@
+<div class="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Header -->
+        <div class="mb-8 animate-slide-down">
+            <h1
+                class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-blue-500 mb-2">
+                Find Mechanics
+            </h1>
+            <p class="text-gray-600 text-lg md:text-xl">Discover verified mechanics near your location</p>
+        </div>
+
+        <!-- Search & Filters -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+            <form *ngIf="searchForm" [formGroup]="searchForm" (ngSubmit)="searchMechanics()">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+
+                    <!-- Radius -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Search Radius</label>
+                        <select formControlName="radiusKm"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                            <option value="5">5 km</option>
+                            <option value="10">10 km</option>
+                            <option value="20">20 km</option>
+                            <option value="50">50 km</option>
+                            <option value="100">100 km</option>
+                        </select>
+                    </div>
+
+                    <!-- Availability Filter -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Availability</label>
+                        <select formControlName="isAvailable"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                            <option [ngValue]="null">All Mechanics</option>
+                            <option [ngValue]="true">Available Only</option>
+                            <option [ngValue]="false">Unavailable Only</option>
+                        </select>
+                    </div>
+
+                    <!-- View Toggle -->
+                    <div class="flex items-end">
+
+                        <div class="flex space-x-2 w-full">
+                            
+                            <button type="button" (click)="viewMode = 'grid'" [class.bg-blue-600]="viewMode === 'grid'"
+                                [class.text-white]="viewMode === 'grid'" [class.bg-gray-200]="viewMode !== 'grid'"
+                                class="flex-1 px-4 py-2 rounded-lg transition-colors hover:shadow-md">
+                                <svg class="h-5 w-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                </svg>
+                            </button>
+                            <button type="button" (click)="viewMode = 'list'" [class.bg-blue-600]="viewMode === 'list'"
+                                [class.text-white]="viewMode === 'list'" [class.bg-gray-200]="viewMode !== 'list'"
+                                class="flex-1 px-4 py-2 rounded-lg transition-colors hover:shadow-md">
+                                <svg class="h-5 w-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filters Toggle -->
+                    <div class="flex items-end">
+                        <button type="button" (click)="toggleFilters()"
+                            class="w-full border border-blue-600 text-blue-600 rounded-lg px-4 py-2 flex items-center justify-center hover:bg-blue-600 hover:text-white transition">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                            </svg>
+                            Filters
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Advanced Filters -->
+                <div *ngIf="showFilters" class="border-t pt-4 mt-4 animate-slide-down">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-1">Specialization</label>
+                            <select formControlName="specialization"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                                <option value="">All Specializations</option>
+                                <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-1">Max Hourly Rate ($)</label>
+                            <input type="number" formControlName="maxHourlyRate"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                                placeholder="Any price" min="0" />
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-1">Minimum Rating</label>
+                            <select formControlName="minRating"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                                <option [ngValue]="null">Any Rating</option>
+                                <option [ngValue]="4.5">4.5+ Stars</option>
+                                <option [ngValue]="4.0">4.0+ Stars</option>
+                                <option [ngValue]="3.5">3.5+ Stars</option>
+                                <option [ngValue]="3.0">3.0+ Stars</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-4 mt-4">
+                        <button type="button" (click)="resetFilters()"
+                            class="border border-gray-300 text-gray-700 rounded-lg px-4 py-2 hover:bg-gray-100 transition">
+                            Reset Filters
+                        </button>
+                        <button type="submit"
+                            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                            Apply Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mechanics Grid -->
+                <div *ngIf="!loading && mechanics.length > 0 && viewMode === 'grid'"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                    <div *ngFor="let mechanic of mechanics"
+                        class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition transform hover:-translate-y-1 animate-scale-in cursor-pointer">
+                        <div class="flex items-start space-x-4 mb-4">
+                            <div
+                                class="h-20 w-20 bg-linear-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0">
+                                {{ mechanic.firstName[0] }}{{ mechanic.lastName[0] }}
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h3 class="font-bold text-lg">{{ mechanic.shopName || mechanic.firstName + ' ' +
+                                        mechanic.lastName }}</h3>
+                                    <span *ngIf="mechanic.isAvailable"
+                                        class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Available</span>
+                                    <span *ngIf="!mechanic.isAvailable"
+                                        class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">Busy</span>
+                                </div>
+                                <p class="text-sm text-gray-500 mb-2">{{ mechanic.specialization || 'General Mechanic'
+                                    }}</p>
+                            </div>
+                        </div>
+                        <div class="border-t pt-3 space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Experience:</span>
+                                <span class="font-semibold">{{ mechanic.yearsOfExperience }} yrs</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Hourly Rate:</span>
+                                <span class="font-semibold text-green-600">${{ mechanic.hourlyRate }}/hr</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Distance:</span>
+                                <span class="font-semibold text-blue-600">{{ mechanic.distance?.toFixed(1) }} km</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 grid grid-cols-2 gap-2">
+                            <button (click)="viewMechanicProfile(mechanic.id)"
+                                class="border border-gray-300 rounded-lg px-4 py-2 text-sm hover:bg-gray-100 transition">View
+                                Profile</button>
+                            <button (click)="contactMechanic(mechanic)"
+                                class="bg-blue-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-blue-700 transition">Request
+                                Service</button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

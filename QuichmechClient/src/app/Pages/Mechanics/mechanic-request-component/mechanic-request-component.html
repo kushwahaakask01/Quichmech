@@ -1,0 +1,200 @@
+<div class="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Header -->
+        <div class="mb-8 animate-slide-down">
+            <h1
+                class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-blue-500 mb-2">
+                Service Requests
+            </h1>
+            <p class="text-gray-600 text-lg md:text-xl">Manage nearby and accepted requests</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex flex-wrap gap-4 mb-6">
+            <button (click)="selectedTab = 'nearby'" [class.bg-gradient-to-r]="selectedTab === 'nearby'"
+                [class.from-purple-500]="selectedTab === 'nearby'" [class.to-blue-500]="selectedTab === 'nearby'"
+                [class.text-white]="selectedTab === 'nearby'" [class.bg-white]="selectedTab !== 'nearby'"
+                class="px-6 py-3 rounded-lg font-semibold shadow-sm transition-all hover:shadow-md">
+                Nearby Pending ({{ nearbyRequests.length }})
+            </button>
+
+            <button (click)="selectedTab = 'mine'" [class.bg-gradient-to-r]="selectedTab === 'mine'"
+                [class.from-purple-500]="selectedTab === 'mine'" [class.to-blue-500]="selectedTab === 'mine'"
+                [class.text-white]="selectedTab === 'mine'" [class.bg-white]="selectedTab !== 'mine'"
+                class="px-6 py-3 rounded-lg font-semibold shadow-sm transition-all hover:shadow-md">
+                My Requests ({{ myRequests.length }})
+            </button>
+        </div>
+
+        <!-- Radius Filter -->
+        <div *ngIf="selectedTab === 'nearby'"
+            class="bg-white rounded-xl shadow-md p-4 mb-6 flex flex-wrap items-center gap-4">
+            <label class="text-gray-700 font-medium mb-0">Search Radius:</label>
+            <select [(ngModel)]="radiusKm" (change)="updateRadius()"
+                class="w-48 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                <option [value]="5">5 km</option>
+                <option [value]="10">10 km</option>
+                <option [value]="20">20 km</option>
+                <option [value]="50">50 km</option>
+                <option [value]="100">100 km</option>
+            </select>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div *ngIf="loading" class="flex justify-center items-center py-20">
+            <div class="w-12 h-12 border-4 border-blue-400 border-dashed rounded-full animate-spin"></div>
+        </div>
+
+        <!-- Nearby Requests Tab -->
+        <div *ngIf="!loading && selectedTab === 'nearby'">
+
+            <!-- Empty State -->
+            <div *ngIf="nearbyRequests.length === 0" class="text-center py-20">
+                <div class="mx-auto h-24 w-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">No nearby pending requests</h3>
+                <p class="text-gray-600">Try increasing the search radius</p>
+            </div>
+
+            <!-- Requests Grid -->
+            <div *ngIf="nearbyRequests.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div *ngFor="let request of nearbyRequests"
+                    class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition transform hover:-translate-y-1 animate-scale-in">
+
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div
+                                class="h-12 w-12 bg-linear-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center text-white">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">{{ request.vehicleMake }} {{ request.vehicleModel }}</h3>
+                                <p class="text-sm text-gray-600">{{ request.vehicleYear || 'Year not specified' }}</p>
+                            </div>
+                        </div>
+                        <span [class]="getStatusClass(request.status)"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-600 mb-1">Service Type</p>
+                        <p class="font-semibold">{{ request.serviceType }}</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-600 mb-1">Issue Description</p>
+                        <p class="text-gray-700">{{ request.issueDescription }}</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                        <div>
+                            <p class="text-gray-600">Customer</p>
+                            <p class="font-semibold">{{ request.customerName }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Phone</p>
+                            <p class="font-semibold">{{ request.customerPhone }}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-600 mb-1">Location</p>
+                        <p class="text-sm">{{ request.address || 'Address not provided' }}</p>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-4 border-t">
+                        <span class="text-sm text-gray-600">{{ request.requestedAt | date: 'short' }}</span>
+                        <div class="flex space-x-2">
+                            <button (click)="viewRequest(request.id)"
+                                class="border border-gray-300 rounded-lg px-4 py-2 text-sm hover:bg-gray-100 transition">View
+                                Details</button>
+                            <button (click)="acceptRequest(request.id)"
+                                class="bg-blue-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-blue-700 transition">Accept</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- My Requests Tab -->
+        <div *ngIf="!loading && selectedTab === 'mine'">
+
+            <!-- Empty State -->
+            <div *ngIf="myRequests.length === 0" class="text-center py-20">
+                <div class="mx-auto h-24 w-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">No accepted requests yet</h3>
+                <p class="text-gray-600">Start by accepting nearby requests</p>
+            </div>
+
+            <!-- Accepted Requests List -->
+            <div *ngIf="myRequests.length > 0" class="space-y-4">
+                <div *ngFor="let request of myRequests" (click)="viewRequest(request.id)"
+                    class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition transform hover:-translate-y-1 animate-scale-in cursor-pointer">
+
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <div
+                                    class="h-12 w-12 bg-linear-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center text-white">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg">{{ request.vehicleMake }} {{ request.vehicleModel }}
+                                    </h3>
+                                    <p class="text-sm text-gray-600">{{ request.serviceType }}</p>
+                                </div>
+                                <span [class]="getStatusClass(request.status)">{{ request.status }}</span>
+                            </div>
+
+                            <p class="text-gray-700 mb-3">{{ request.issueDescription }}</p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-600">Customer</p>
+                                    <p class="font-semibold">{{ request.customerName }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Phone</p>
+                                    <p class="font-semibold">{{ request.customerPhone }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Requested</p>
+                                    <p class="font-semibold">{{ request.requestedAt | date: 'short' }}</p>
+                                </div>
+                                <div *ngIf="request.estimatedCost">
+                                    <p class="text-gray-600">Estimated Cost</p>
+                                    <p class="font-semibold text-blue-600">${{ request.estimatedCost }}</p>
+                                </div>
+                                <div *ngIf="request.finalCost">
+                                    <p class="text-gray-600">Final Cost</p>
+                                    <p class="font-semibold text-green-600">${{ request.finalCost }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <svg class="h-5 w-5 text-gray-400 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

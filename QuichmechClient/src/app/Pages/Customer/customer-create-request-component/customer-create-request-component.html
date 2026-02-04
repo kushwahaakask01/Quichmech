@@ -1,0 +1,186 @@
+<div class="min-h-screen bg-linear-to-br from-green-50 via-blue-50 to-purple-50 py-12">
+    <div class="container-custom max-w-4xl">
+        <!-- Progress Steps -->
+        <div class="w-full mb-4 flex flex-col items-center">
+            <!-- Steps row -->
+            <div class="w-full flex items-center justify-between">
+                <ng-container *ngFor="let step of [1,2,3]; let i = index">
+                    <!-- Step circle -->
+                    <div class="flex flex-col items-center flex-1 m-0">
+                        <div class="flex items-center justify-center w-12 h-12 rounded-full font-bold transition-all text-lg md:text-xl"
+                            [class.bg-gradient-to-r]="currentStep >= step" [class.from-purple-600]="currentStep >= step"
+                            [class.to-blue-500]="currentStep >= step" [class.text-white]="currentStep >= step"
+                            [class.bg-gray-200]="currentStep < step" [class.text-gray-500]="currentStep < step">
+                            {{ step }}
+                        </div>
+                        <!-- Step label -->
+                        <span class="mt-2 text-sm md:text-base text-gray-600 font-medium">
+                            {{ step === 1 ? 'Vehicle Info' : step === 2 ? 'Issue Details' : 'Location' }}
+                        </span>
+                    </div>
+
+                    <!-- Connector bar (except after last step) -->
+                    <div *ngIf="i < 2" class="flex-1 h-1 mx-2 rounded-full transition-all"
+                        [class.bg-gradient-to-r]="currentStep > step" [class.from-purple-600]="currentStep > step"
+                        [class.to-blue-500]="currentStep > step" [class.bg-gray-200]="currentStep <= step">
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+        <!-- Form Card -->
+        <div
+            class="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center pb-10 px-4">
+            <div class="w-full max-w-3xl bg-white rounded-2xl shadow-xl p-8 md:p-12 animate-fade-in">
+
+                <!-- Header -->
+                <h2
+                    class="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-linear-to-r from-purple-600 to-blue-500 mb-6">
+                    Create Service Request
+                </h2>
+
+                <!-- Error Message -->
+                <div *ngIf="errorMessage"
+                    class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                    {{ errorMessage }}
+                </div>
+
+                <!-- Form -->
+                <form [formGroup]="requestForm">
+
+                    <!-- Step 1: Vehicle Information -->
+                    <div *ngIf="currentStep === 1" class="space-y-6 animate-fade-in">
+                        <h3 class="text-xl md:text-2xl font-semibold mb-4">Vehicle Information</h3>
+
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Vehicle Type *</label>
+                            <select formControlName="vehicleType"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                                <option value="">Select type</option>
+                                <option *ngFor="let type of vehicleTypes" [value]="type">{{ type }}</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Make *</label>
+                                <input type="text" formControlName="vehicleMake"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                                    placeholder="e.g., Toyota">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Model *</label>
+                                <input type="text" formControlName="vehicleModel"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                                    placeholder="e.g., Camry">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Year (Optional)</label>
+                            <input type="text" formControlName="vehicleYear"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                                placeholder="e.g., 2020">
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Issue Details -->
+                    <div *ngIf="currentStep === 2" class="space-y-6 animate-fade-in">
+                        <h3 class="text-xl md:text-2xl font-semibold mb-4">Issue Details</h3>
+
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Service Type *</label>
+                            <select formControlName="serviceType"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                                <option value="">Select service type</option>
+                                <option *ngFor="let type of serviceTypes" [value]="type">{{ type }}</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Describe the Issue *</label>
+                            <textarea formControlName="issueDescription" rows="6"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                                placeholder="Please describe the problem with your vehicle in detail..."></textarea>
+                            <p class="text-sm text-gray-500 mt-1">Minimum 10 characters</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Location -->
+                    <div *ngIf="currentStep === 3" class="space-y-6 animate-fade-in">
+                        <h3 class="text-xl md:text-2xl font-semibold mb-4">Location</h3>
+
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Address (Optional)</label>
+                            <input type="text" formControlName="address"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                                placeholder="123 Main St, City, State">
+                        </div>
+
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="flex items-start">
+                                <svg class="h-6 w-6 text-blue-600 mr-3 shrink-0" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <div>
+                                    <p class="font-semibold text-blue-900 mb-1">Your location has been detected</p>
+                                    <p class="text-sm text-blue-700">
+                                        Lat: {{ requestForm.get('latitude')?.value?.toFixed(6) }},
+                                        Lng: {{ requestForm.get('longitude')?.value?.toFixed(6) }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t pt-6 mt-6">
+                            <h4 class="font-semibold mb-4">Request Summary</h4>
+                            <div class="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Vehicle:</span>
+                                    <span class="font-semibold">
+                                        {{ requestForm.get('vehicleMake')?.value }} {{
+                                        requestForm.get('vehicleModel')?.value }} {{
+                                        requestForm.get('vehicleYear')?.value }}
+                                    </span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Type:</span>
+                                    <span class="font-semibold">{{ requestForm.get('vehicleType')?.value }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Service:</span>
+                                    <span class="font-semibold">{{ requestForm.get('serviceType')?.value }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="flex justify-between mt-8 pt-6 border-t">
+                        <button type="button" *ngIf="currentStep > 1" (click)="previousStep()"
+                            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition">
+                            Previous
+                        </button>
+
+                        <div class="flex-1"></div>
+
+                        <button type="button" *ngIf="currentStep < totalSteps" [disabled]="!isStepValid(currentStep)"
+                            (click)="nextStep()"
+                            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next
+                        </button>
+
+                        <button type="button" *ngIf="currentStep === totalSteps"
+                            [disabled]="!requestForm.valid || loading" (click)="submitRequest()"
+                            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span *ngIf="!loading">Submit Request</span>
+                            <span *ngIf="loading">Submitting...</span>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

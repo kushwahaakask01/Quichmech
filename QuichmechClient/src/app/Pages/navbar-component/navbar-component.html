@@ -1,0 +1,126 @@
+<nav class="bg-white shadow-md sticky top-0 z-50 text-black">
+    <div class="container-custom">
+        <div class="flex justify-between items-center h-16">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a routerLink="/" class="flex items-center space-x-2">
+                    <div class="h-10 w-10 bg-gradient-primary rounded-lg flex items-center justify-center">
+                        <svg class="h-6 w-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold gradient-text">QuickMech</span>
+                </a>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex items-center space-x-8 font-bold">
+                <!-- Customer Links -->
+                <ng-container *ngIf="authService.isCustomer()" class="text-black font-bold">
+                    <a routerLink="/customer/dashboard" routerLinkActive="navbar-link-active" class="navbar-link">
+                        Dashboard
+                    </a>
+                    <a routerLink="/customer/find-mechanics" routerLinkActive="navbar-link-active" class="navbar-link">
+                        Find Mechanics
+                    </a>
+                    <a routerLink="/customer/my-requests" routerLinkActive="navbar-link-active" class="navbar-link">
+                        My Requests
+                    </a>
+                </ng-container>
+
+                <!-- Mechanic Links -->
+                <ng-container *ngIf="authService.isMechanic()" class="text-black font-bold">
+                    <a routerLink="/mechanic/dashboard" routerLinkActive="navbar-link-active" class="navbar-link">
+                        Dashboard
+                    </a>
+                    <a routerLink="/mechanic/requests" routerLinkActive="navbar-link-active" class="navbar-link">
+                        Service Requests
+                    </a>
+                    <a routerLink="/mechanic/profile" routerLinkActive="navbar-link-active" class="navbar-link">
+                        Profile
+                    </a>
+                </ng-container>
+
+                <!-- Auth Buttons -->
+                <div class="flex items-center space-x-4">
+                    <ng-container *ngIf="!authService.isLoggedIn">
+                        <a routerLink="/login" class="navbar-link text-black">Sign In</a>
+                        <a routerLink="/register" class="btn btn-primary text-sm text-black px-4 py-2">Get Started</a>
+                    </ng-container>
+
+                    <ng-container *ngIf="authService.isLoggedIn">
+                        <div class="relative">
+                            <button (click)="toggleMenu()" class="flex items-center space-x-2 focus:outline-none">
+                                <div
+                                    class="h-10 w-10 bg-gradient-primary rounded-full flex items-center justify-center text-black font-semibold">
+                                    {{ userInitials }}
+                                </div>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div *ngIf="isMenuOpen"
+                                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-strong py-2 animate-scale-in">
+                                <div class="px-4 py-2 border-b">
+                                    <p class="font-semibold text-black">{{ currentUser?.firstName }} {{ currentUser?.lastName }}
+                                    </p>
+                                    <p class="text-sm text-black">{{ currentUser?.role }}</p>
+                                </div>
+                                <button (click)="logout()"
+                                    class="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 flex items-center space-x-2">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
+                                    <span>Logout</span>
+                                </button>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button (click)="toggleMenu()" class="text-gray-700 hover:text-gray-900 focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path *ngIf="!isMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                        <path *ngIf="isMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div *ngIf="isMenuOpen" class="md:hidden pb-4 animate-slide-down">
+            <div class="flex flex-col space-y-2">
+                <a routerLink="/" (click)="toggleMenu()" class="navbar-link">Home</a>
+
+                <ng-container *ngIf="authService.isCustomer()">
+                    <a routerLink="/customer/dashboard" (click)="toggleMenu()" class="navbar-link">Dashboard</a>
+                    <a routerLink="/customer/find-mechanics" (click)="toggleMenu()" class="navbar-link">Find
+                        Mechanics</a>
+                    <a routerLink="/customer/my-requests" (click)="toggleMenu()" class="navbar-link">My Requests</a>
+                </ng-container>
+
+                <ng-container *ngIf="authService.isMechanic()">
+                    <a routerLink="/mechanic/dashboard" (click)="toggleMenu()" class="navbar-link">Dashboard</a>
+                    <a routerLink="/mechanic/requests" (click)="toggleMenu()" class="navbar-link">Service Requests</a>
+                    <a routerLink="/mechanic/profile" (click)="toggleMenu()" class="navbar-link">Profile</a>
+                </ng-container>
+
+                <ng-container *ngIf="!authService.isLoggedIn">
+                    <a routerLink="/login" (click)="toggleMenu()" class="navbar-link">Sign In</a>
+                    <a routerLink="/register" (click)="toggleMenu()"
+                        class="btn btn-primary text-sm inline-block text-center">Get Started</a>
+                </ng-container>
+
+                <ng-container *ngIf="authService.isLoggedIn">
+                    <button (click)="logout()" class="navbar-link text-red-600 text-left">Logout</button>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</nav>

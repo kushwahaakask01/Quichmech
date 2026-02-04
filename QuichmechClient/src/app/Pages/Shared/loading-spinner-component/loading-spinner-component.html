@@ -1,0 +1,8 @@
+<div class="flex flex-col items-center justify-center" [class.h-screen]="fullScreen" [class.py-20]="!fullScreen">
+    <div class="relative">
+        <div class="loading-spinner" [class.h-8]="size === 'sm'" [class.w-8]="size === 'sm'"
+            [class.h-12]="size === 'md'" [class.w-12]="size === 'md'" [class.h-16]="size === 'lg'"
+            [class.w-16]="size === 'lg'"></div>
+    </div>
+    <p *ngIf="message" class="mt-4 text-gray-600 animate-pulse">{{ message }}</p>
+</div>

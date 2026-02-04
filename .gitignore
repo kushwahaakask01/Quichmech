@@ -1,0 +1,50 @@
+# =====================================
+# ASP.NET Core / Visual Studio
+# =====================================
+.vs/
+**/.vs/
+
+bin/
+obj/
+
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# =====================================
+# Angular / Node / Frontend
+# =====================================
+node_modules/
+dist/
+.env
+
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Angular cache
+.angular/
+.angular/cache/
+
+# =====================================
+# VS Code
+# =====================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# =====================================
+# Logs & Coverage
+# =====================================
+logs/
+*.log
+coverage/
+
+# =====================================
+# OS Files
+# =====================================
+.DS_Store
+Thumbs.db

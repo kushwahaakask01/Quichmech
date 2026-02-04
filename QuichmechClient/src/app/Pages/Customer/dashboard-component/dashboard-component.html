@@ -1,0 +1,192 @@
+<div class="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Welcome Header -->
+        <div class="mb-8 animate-slide-down">
+            <h1
+                class="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-500 mb-2">
+                Welcome back, {{ authService.currentUserValue?.firstName }}!
+            </h1>
+            <p class="text-gray-600 text-base sm:text-lg">Manage your service requests and find mechanics</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+            <!-- Total Requests -->
+            <div
+                class="p-4 rounded-xl bg-linear-to-br from-blue-500 to-blue-600 text-white shadow-md hover:shadow-xl transition transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium mb-1">Total Requests</p>
+                        <p class="text-3xl sm:text-4xl font-bold">{{ stats.total }}</p>
+                    </div>
+                    <div class="h-16 w-16 bg-white text-black bg-opacity-20 rounded-full flex items-center justify-center">
+                        <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Requests -->
+            <div
+                class="p-4 rounded-xl bg-linear-to-br from-yellow-500 to-orange-500 text-white shadow-md hover:shadow-xl transition transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium mb-1">Pending</p>
+                        <p class="text-3xl sm:text-4xl font-bold">{{ stats.pending }}</p>
+                    </div>
+                    <div class="h-16 w-16 bg-white text-black bg-opacity-20 rounded-full flex items-center justify-center">
+                        <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Requests -->
+            <div
+                class="p-4 rounded-xl bg-linear-to-br from-purple-500 to-pink-500 text-white shadow-md hover:shadow-xl transition transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium mb-1">Active</p>
+                        <p class="text-3xl sm:text-4xl font-bold">{{ stats.active }}</p>
+                    </div>
+                    <div class="h-16 w-16 bg-white text-black bg-opacity-20 rounded-full flex items-center justify-center">
+                        <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed Requests -->
+            <div
+                class="p-4 rounded-xl bg-linear-to-br from-green-500 to-teal-500 text-white shadow-md hover:shadow-xl transition transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium mb-1">Completed</p>
+                        <p class="text-3xl sm:text-4xl font-bold">{{ stats.completed }}</p>
+                    </div>
+                    <div class="h-16 w-16 bg-white text-black bg-opacity-20 rounded-full flex items-center justify-center">
+                        <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+            <div (click)="createNewRequest()"
+                class="p-4 rounded-xl bg-linear-to-r from-purple-200 to-pink-200 hover:shadow-lg transition cursor-pointer flex items-center space-x-4">
+                <div
+                    class="h-16 w-16 bg-linear-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                    <svg class="h-8 w-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg sm:text-xl font-bold">Create New Request</h3>
+                    <p class="text-gray-600 text-sm sm:text-base">Get help from nearby mechanics</p>
+                </div>
+            </div>
+
+            <div (click)="findMechanics()"
+                class="p-4 rounded-xl bg-linear-to-r from-yellow-200 to-orange-200 hover:shadow-lg transition cursor-pointer flex items-center space-x-4">
+                <div
+                    class="h-16 w-16 bg-linear-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center">
+                    <svg class="h-8 w-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg sm:text-xl font-bold">Find Mechanics</h3>
+                    <p class="text-gray-600 text-sm sm:text-base">Search for verified professionals</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Requests -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Recent Service Requests</h2>
+                <a routerLink="/customer/my-requests"
+                    class="flex items-center font-semibold text-blue-500 hover:text-blue-600">
+                    View All
+                    <svg class="h-5 w-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="requests.length === 0" class="text-center py-12">
+                <div class="mx-auto h-24 w-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">No service requests yet</h3>
+                <p class="text-gray-600 mb-4">Create your first service request to get started</p>
+                <button (click)="createNewRequest()"
+                    class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition">Create
+                    Request</button>
+            </div>
+
+            <!-- Requests List -->
+            <div *ngIf="requests.length > 0" class="space-y-4">
+                <div *ngFor="let request of requests" (click)="navigateToRequest(request.id)"
+                    class="p-4 rounded-lg border border-gray-200 bg-gray-50 hover:bg-white hover:shadow-md transition cursor-pointer">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <h3 class="font-semibold text-lg">{{ request.vehicleMake }} {{ request.vehicleModel }}
+                                </h3>
+                                <span [class]="getStatusClass(request.status)">{{ request.status }}</span>
+                            </div>
+                            <p class="text-gray-600 mb-2">{{ request.issueDescription }}</p>
+                            <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                                <div class="flex items-center gap-1">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    {{ request.requestedAt | date:'short' }}
+                                </div>
+                                <div *ngIf="request.mechanicName" class="flex items-center gap-1">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                    {{ request.mechanicName }}
+                                </div>
+                                <div *ngIf="request.finalCost"
+                                    class="flex items-center gap-1 text-green-600 font-semibold">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    ${{ request.finalCost }}
+                                </div>
+                            </div>
+                        </div>
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,6 @@
+@QuichmechBackend_HostAddress = http://localhost:5269
+
+GET {{QuichmechBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

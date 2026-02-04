@@ -1,0 +1,223 @@
+<div class="min-h-screen bg-linear-to-br from-indigo-50 via-purple-50 to-pink-50 py-10 px-4">
+    <div class="max-w-6xl mx-auto">
+
+        <!-- Header -->
+        <div class="mb-10 text-center lg:text-left animate-slide-down">
+            <h1
+                class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-500 mb-2">
+                My Profile
+            </h1>
+            <p class="text-gray-600 text-base md:text-lg">Manage your professional information</p>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div *ngIf="loading" class="flex justify-center items-center py-20">
+            <div class="w-16 h-16 border-4 border-purple-300 border-t-purple-600 rounded-full animate-spin"></div>
+        </div>
+
+        <!-- Profile Content -->
+        <div *ngIf="!loading && currentProfile" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Main Profile Card -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sm:p-8 transition-all">
+
+                    <!-- Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800">
+                            Profile Information
+                        </h2>
+                        <button *ngIf="!editing" (click)="enableEdit()"
+                            class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition shadow-sm">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Edit Profile
+                        </button>
+                    </div>
+
+                    <!-- Error -->
+                    <div *ngIf="errorMessage"
+                        class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                        {{ errorMessage }}
+                    </div>
+
+                    <!-- View Mode -->
+                    <div *ngIf="!editing" class="space-y-6">
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <p class="text-xs uppercase tracking-wide text-gray-400">Shop Name</p>
+                                <p class="mt-1 font-semibold text-gray-800">
+                                    {{ currentProfile.shopName || 'Not set' }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs uppercase tracking-wide text-gray-400">Experience</p>
+                                <p class="mt-1 font-semibold text-gray-800">
+                                    {{ currentProfile.yearsOfExperience }} years
+                                </p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs uppercase tracking-wide text-gray-400">Hourly Rate</p>
+                                <p class="mt-1 font-semibold text-green-600">
+                                    ${{ currentProfile.hourlyRate }}/hr
+                                </p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs uppercase tracking-wide text-gray-400">Status</p>
+                                <span *ngIf="currentProfile.isVerified"
+                                    class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                                    Verified
+                                </span>
+                                <span *ngIf="!currentProfile.isVerified"
+                                    class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
+                                    Pending
+                                </span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-xs uppercase tracking-wide text-gray-400">Specialization</p>
+                            <p class="mt-1 font-semibold text-gray-800">
+                                {{ currentProfile.specialization || 'Not specified' }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-xs uppercase tracking-wide text-gray-400">Address</p>
+                            <p class="mt-1 font-semibold text-gray-800">
+                                {{ currentProfile.address || 'Not set' }}
+                            </p>
+                            <p class="mt-1 text-xs text-gray-400">
+                                Lat: {{ currentProfile.latitude.toFixed(6) }},
+                                Lng: {{ currentProfile.longitude.toFixed(6) }}
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <!-- Edit Mode -->
+                    <form *ngIf="editing" [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="space-y-6">
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Shop Name *</label>
+                            <input type="text" formControlName="shopName"
+                                class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                placeholder="e.g., Mike's Auto Repair" />
+                            <p *ngIf="profileForm.get('shopName')?.invalid && profileForm.get('shopName')?.touched"
+                                class="mt-1 text-sm text-red-500">
+                                Shop name is required
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Years of Experience
+                                    *</label>
+                                <input type="number" formControlName="yearsOfExperience"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Hourly Rate ($) *</label>
+                                <input type="number" formControlName="hourlyRate"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
+                            <input type="text" formControlName="specialization"
+                                class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500" />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">License Number</label>
+                            <input type="text" formControlName="licenseNumber"
+                                class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500" />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Address *</label>
+                            <input type="text" formControlName="address"
+                                class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500" />
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
+                                <input type="number" formControlName="latitude"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
+                                <input type="number" formControlName="longitude"
+                                    class="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500" />
+                            </div>
+                        </div>
+
+                        <button type="button" (click)="getCurrentLocation()"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-purple-300 text-purple-600 hover:bg-purple-50 transition">
+                            Use My Current Location
+                        </button>
+
+                        <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                            <button type="submit" [disabled]="profileForm.invalid || saving"
+                                class="flex-1 rounded-lg bg-purple-600 px-4 py-2 text-white font-semibold hover:bg-purple-700 transition disabled:opacity-50">
+                                {{ saving ? 'Saving...' : 'Save Changes' }}
+                            </button>
+
+                            <button type="button" (click)="cancelEdit()"
+                                class="flex-1 rounded-lg border border-gray-300 px-4 py-2 font-semibold text-gray-700 hover:bg-gray-50 transition">
+                                Cancel
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+
+                <!-- Stats -->
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-gray-800">Your Stats</h3>
+
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-500">Average Rating</span>
+                        <span class="text-2xl font-bold text-gray-800">
+                            {{ currentProfile.averageRating.toFixed(1) }}
+                        </span>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Total Reviews</span>
+                        <span class="font-semibold">{{ currentProfile.totalReviews }}</span>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Availability</span>
+                        <span *ngIf="currentProfile.isAvailable"
+                            class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                            Available
+                        </span>
+                        <span *ngIf="!currentProfile.isAvailable"
+                            class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                            Unavailable
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
